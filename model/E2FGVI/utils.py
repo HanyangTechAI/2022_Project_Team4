@@ -328,3 +328,29 @@ if __name__ == '__main__':
         for m in masks:
             cv2.imshow('mask', np.array(m))
             cv2.waitKey(500)
+
+# sample reference frames from the whole video 
+def get_ref_index(f, neighbor_ids, length, ref_length, num_ref):
+    ref_index = []
+    if num_ref == -1:
+        for i in range(0, length, ref_length):
+            if i not in neighbor_ids:
+                ref_index.append(i)
+    else:
+        start_idx = max(0, f - ref_length * (num_ref//2))
+        end_idx = min(length, f + ref_length * (num_ref//2))
+        for i in range(start_idx, end_idx+1, ref_length):
+            if i not in neighbor_ids:
+                if len(ref_index) > num_ref:
+                    break
+                ref_index.append(i)
+    return ref_index
+
+# save inpainting video
+def save_video(results,fps):
+    h, w = results[0].shape[:-1]
+    fourcc = cv2.VideoWriter_fourcc(*'DIVX')
+    video = cv2.VideoWriter(f"Inpainting_Video.mp4",fourcc,fps,(w,h))
+    for frame in results:
+        video.write(frame[:,:,::-1].astype("uint8"))
+    video.release()
