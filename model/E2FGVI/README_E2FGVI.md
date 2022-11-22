@@ -6,7 +6,7 @@
 import torch
 from video_inpainting import VideoInpaintingModel
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu"
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 model = VideoInpaintingModel(device=device)
 output = model.inference(frames,masks)
 
