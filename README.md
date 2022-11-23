@@ -2,7 +2,10 @@
 This is a repository for 2022 project of team 4
 
 
-### 쓰는 법
+=========
+
+## mask propagation 쓰는 법
+>>>>>>>>> Temporary merge branch 2
 
 1.from propagation import propagation로 propagation class 를 불러옴
 
