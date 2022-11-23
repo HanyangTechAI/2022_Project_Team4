@@ -2,7 +2,9 @@
 This is a repository for 2022 project of team 4
 
 
-### 쓰는 법
+
+## mask propagation 쓰는 법
+>>>>>>> 23e5446ad960e6bd2c3fe23426b4b4a59f179fbf
 
 1.from propagation import propagation로 propagation class 를 불러옴
 
