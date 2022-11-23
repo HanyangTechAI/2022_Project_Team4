@@ -10,11 +10,9 @@ import cv2
 parser = ArgumentParser()
 parser.add_argument('--second', default=3)#동영상 index에서 동영상 second로 변경
 parser.add_argument('--file', default='./testVideos/videoplayback_Trim.mp4')
-parser.add_argument('--output', default='output')
+parser.add_argument('--output', default='none')
 args = parser.parse_args()
 
-os.makedirs(args.output, exist_ok=True)
-palette = Image.open(path.expanduser('./palette/00000.png')).getpalette()
 
 torch.autograd.set_grad_enabled(False)
 
@@ -37,10 +35,10 @@ while(cap.isOpened()):
 (major_ver, minor_ver, subminor_ver) = (cv2.__version__).split('.')
 if int(major_ver)  < 3 :
     fps = int(cap.get(cv2.cv.CV_CAP_PROP_FPS))
-    print ("Frames per second using video.get(cv2.cv.CV_CAP_PROP_FPS): {0}".format(fps))
+    #print ("Frames per second using video.get(cv2.cv.CV_CAP_PROP_FPS): {0}".format(fps))
 else :
     fps = int(cap.get(cv2.CAP_PROP_FPS))
-    print ("Frames per second using video.get(cv2.CAP_PROP_FPS) : {0}".format(fps))
+    #print ("Frames per second using video.get(cv2.CAP_PROP_FPS) : {0}".format(fps))
  
 
 cap.release()
@@ -79,11 +77,14 @@ out_masks = propa.process()#propagaton을 통하여 나머지 프레임에서 ma
 del propa
 
 #save out_mask as a file
-os.makedirs(args.output, exist_ok=True)
-for f in range(out_masks.shape[0]):
-    img_E = Image.fromarray(out_masks[f])
-    img_E.putpalette(palette)
-    img_E.save(os.path.join(args.output, '{:05d}.png'.format(f)))#mask를 이미지 파일로 저장
+if(not(args.output == 'none')):
+    os.makedirs(args.output, exist_ok=True)
+    palette = Image.open(path.expanduser('./palette/00000.png')).getpalette()
+    os.makedirs(args.output, exist_ok=True)
+    for f in range(out_masks.shape[0]):
+        img_E = Image.fromarray(out_masks[f])
+        img_E.putpalette(palette)
+        img_E.save(os.path.join(args.output, '{:05d}.png'.format(f)))#mask를 이미지 파일로 저장
 
 print("done")
 
