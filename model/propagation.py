@@ -17,57 +17,30 @@ torch.autograd.set_grad_enabled(False)
 CONST_e = 2.718282
 
 class propagation:
-    def __init__(self,file,index):
-        cap = cv2.VideoCapture(file)
-        outList = []
-        outListFront = []
-        self.indexFrame = None
-
-        self.mask = None
-
-        count = 0
-
-        if(not(cap.isOpened())):
-            print("cant open file")
+    def __init__(self,video,index):
+        if(index > 0 and index <= len(video)):
+            self.indexFrame = video[index-1].numpy()
+        else:
+            print("index out of range. input should be in range 1~",len(video))
             quit()
-
-        while(cap.isOpened()):
-            count += 1 
-            ret, frame = cap.read()
-            if(count == index):
-                self.indexFrame = frame
-            if(count < index):
-                if ret == True:
-                    outListFront.append(torch.tensor(frame))
-                else: 
-                    break
-            else:
-                if ret == True:
-                    outList.append(torch.tensor(frame))
-                else: 
-                    break
-
-        if(self.indexFrame is None):
-            print("index out of range")
-            quit()
-
-        cap.release()
         
+        self.mask = None
         if(not(index == 1)):
-            outListFront.reverse()
-            self.framesFront = torch.stack(outListFront, 0).permute((0, 3, 1, 2))[None,:,:,:,:].cpu()
+            self.framesFront = video[:index]
+            self.framesFront.reverse()
+            self.framesFront = torch.stack(self.framesFront, 0).permute((0, 3, 1, 2))[None,:,:,:,:].cpu()
             self.framesFront = (self.framesFront -127.5)/127.5*CONST_e
 
-        if(not(index == count)):
-            self.frames = torch.stack(outList, 0).permute((0, 3, 1, 2))[None,:,:,:,:].cpu()
+        if(not(index == len(video))):
+            self.frames = video[index:]
+            self.frames = torch.stack(self.frames, 0).permute((0, 3, 1, 2))[None,:,:,:,:].cpu()
             self.frames = (self.frames -127.5)/127.5*CONST_e
 
-
         self.frameSize = []
-        self.frameSize.append(torch.tensor([self.frames.shape[3]]))
-        self.frameSize.append(torch.tensor([self.frames.shape[4]]))
+        self.frameSize.append(torch.tensor([len(video[0])]))
+        self.frameSize.append(torch.tensor([len(video[0][0])]))
         
-
+        #model for Mask propagation
         prop_saved = torch.load('./Mask-Propagation/saves/propagation_model.pth')
         top_k = None
         self.prop_model = PropagationNetwork(top_k=top_k, km=5.6).cuda().eval()
