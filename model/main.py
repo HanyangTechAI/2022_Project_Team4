@@ -8,7 +8,7 @@ import cv2
 
 #basic setup
 parser = ArgumentParser()
-parser.add_argument('--index', default=50)
+parser.add_argument('--second', default=3)#동영상 index에서 동영상 second로 변경
 parser.add_argument('--file', default='./testVideos/videoplayback_Trim.mp4')
 parser.add_argument('--output', default='output')
 args = parser.parse_args()
@@ -26,17 +26,29 @@ if(not(cap.isOpened())):
     print("cant open file")
     quit()
 
+
+
 while(cap.isOpened()):
     ret, frame = cap.read()
     if ret == True:
         outList.append(torch.tensor(frame))
     else: 
         break
+(major_ver, minor_ver, subminor_ver) = (cv2.__version__).split('.')
+if int(major_ver)  < 3 :
+    fps = int(cap.get(cv2.cv.CV_CAP_PROP_FPS))
+    print ("Frames per second using video.get(cv2.cv.CV_CAP_PROP_FPS): {0}".format(fps))
+else :
+    fps = int(cap.get(cv2.CAP_PROP_FPS))
+    print ("Frames per second using video.get(cv2.CAP_PROP_FPS) : {0}".format(fps))
+ 
 
-#도현이 형이 outList가져다가 쓰면 됨 torch.stack(self.frames, 0)참고.
+cap.release()
+
+#도현이 형이 outList가져다가 쓰면 됨. torch.stack(self.frames, 0)참고.
 
 #get mask frame
-propa = propagation(outList,int(args.index))#front에서 mp4파일과 index를 받아서 모델을 만듦
+propa = propagation(outList,int(args.second)*fps)#front에서 mp4파일과 second를 받아서 모델을 만듦
 
 
 XYCoordinates = []
