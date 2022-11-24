@@ -1,0 +1,51 @@
+.wrap{
+    padding-top: 5px;
+}
+
+.contents{
+    font-size: 25px;
+    font-weight: 400;
+}
+
+.selected{
+    position:absolute;
+    right: 30px;
+    bottom: 30px;
+    width: 200px;
+    height: 50px;
+    line-height: 50px;
+    background: #0D41C9;
+    color: white;
+    border-radius: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.reselect{
+    position:absolute;
+    right: 260px;
+    bottom: 30px;
+    width: 200px;
+    height: 50px;
+    line-height: 50px;
+    background: #0D41C9;
+    color: white;
+    border-radius: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.videoDisplay{
+    margin-top: 20px;
+    width: 900px;
+    height: 570px;
+    object-fit: contain;
+}
+
+.preview_image{
+    margin-top: 20px;
+    width: 900px;
+    height: 570px;
+    object-fit: contain;
+    background: black;
+}

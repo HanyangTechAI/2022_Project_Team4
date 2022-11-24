@@ -1,0 +1,27 @@
+*{
+    list-style: none;
+    text-decoration: none;
+    border-collapse: collapse;
+    margin: 0px;
+    padding: 0px;
+    color: black;
+}
+
+footer{
+    height: 170px;
+    background: gray;
+}
+
+footer > div:first-child,
+footer > div:first-child > div:first-child,
+footer > div:first-child > div:last-child{
+    padding-top: 10px;
+    text-align: center;
+    color: white;
+}
+
+footer > div:last-child{
+    margin-top: 8px;
+    text-align: center;
+    color: #b2b3b5;
+}
