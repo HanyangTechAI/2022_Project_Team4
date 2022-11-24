@@ -1,0 +1,96 @@
+
+
+.main h1{
+    font-size: 60px;
+    color: #0D41C9;
+}
+
+.main_texts> li{
+    padding-top: 30px;
+}
+.main_texts > li > div{
+    text-align: center;
+    margin:auto;
+}
+
+.main_texts > li > div:not(:last-child) {
+    padding-bottom: 10px;
+}
+
+.select_button{
+    width: 300px;
+    height: 50px;
+    background: #0D41C9;
+    color: white;
+    font-size: 20px;
+    line-height: 50px;
+    margin: 25px auto;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.submit{
+    width: 150px;
+    height: 50px;
+    background: #0D41C9;
+    color: white;
+    font-size: 20px;
+    line-height: 50px;
+    margin: 25px auto;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.icons > li{
+    display: flex;
+}
+.icons > li > .select_video{
+    color: white;
+    flex:9;
+    text-align: center;
+    margin-left: 15px;
+}
+.icons > li > div:last-child{
+    flex:3;
+    margin-right: 15px;
+}
+
+.folder_img > img{
+    margin-top: 5px;
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+}
+
+.file-wrapper{
+    margin: 50px 0 20px 0;
+}
+
+.file-wrapper video{
+    width: 500px;
+    height: 350px;
+    margin-top: 30px;
+    object-fit: contain;
+}
+
+.buttons{
+    display: flex;
+    width:500px;
+    text-align: center;
+}
+
+.buttons > div:first-child{
+    flex:0.5;
+    margin-right: 30px;
+}
+
+.buttons > div > label{
+    width: 300px;
+    height: 50px;
+}
+
+.buttons > div:last-child{
+    flex:1;
+}

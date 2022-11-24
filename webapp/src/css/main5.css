@@ -1,0 +1,16 @@
+.main h1{
+    font-size: 60px;
+    color: #0D41C9;
+}
+
+.main_changing> li{
+    padding-top: 200px;
+}
+.main_changing > li > div{
+    text-align: center;
+    margin:auto;
+}
+
+.main_changing > li > div:not(:last-child) {
+    padding-bottom: 20px;
+}
