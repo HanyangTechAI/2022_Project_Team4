@@ -34,10 +34,10 @@ while(cap.isOpened()):
         break
 (major_ver, minor_ver, subminor_ver) = (cv2.__version__).split('.')
 if int(major_ver)  < 3 :
-    fps = int(cap.get(cv2.cv.CV_CAP_PROP_FPS))
+    fps = float(cap.get(cv2.cv.CV_CAP_PROP_FPS))
     #print ("Frames per second using video.get(cv2.cv.CV_CAP_PROP_FPS): {0}".format(fps))
 else :
-    fps = int(cap.get(cv2.CAP_PROP_FPS))
+    fps = float(cap.get(cv2.CAP_PROP_FPS))
     #print ("Frames per second using video.get(cv2.CAP_PROP_FPS) : {0}".format(fps))
  
 
@@ -46,8 +46,7 @@ cap.release()
 #도현이 형이 outList가져다가 쓰면 됨. torch.stack(self.frames, 0)참고.
 
 #get mask frame
-propa = propagation(outList,int(args.second)*fps)#front에서 mp4파일과 second를 받아서 모델을 만듦
-
+propa = propagation(outList,int(int(args.second)*fps))#front에서 mp4파일과 second를 받아서 모델을 만듦
 
 XYCoordinates = []
 def getXYCoordinates(event, x, y, flags, param):
