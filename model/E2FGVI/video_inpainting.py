@@ -2,8 +2,8 @@ import torch
 import numpy as np
 from tqdm import tqdm
 
-from utils import get_ref_index
-from model.e2fgvi_hq import InpaintGenerator
+from .utils import get_ref_index
+from .model.e2fgvi_hq import InpaintGenerator
 
 class VideoInpaintingModel:
     
