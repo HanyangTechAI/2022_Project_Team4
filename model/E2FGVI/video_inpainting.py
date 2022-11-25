@@ -19,11 +19,11 @@ class VideoInpaintingModel:
 
     def inference(self, frames, masks):
 
-        t, h, w = frames.shape[:-1]
-        
-        imgs = torch.from_numpy(frames).permute(0,3,1,2).contiguous().float().div(255)
+        t = len(frames)
+        h, w = frames[0].shape[:-1]
+
+        imgs = torch.from_numpy(np.array(frames)).permute(0,3,1,2).contiguous().float().div(255)
         imgs = imgs.unsqueeze(0) * 2 - 1
-        frames = [f.astype(np.uint8) for f in frames]
 
         masks = np.expand_dims(masks,-1)
         binary_masks = [m.astype(np.uint8) for m in masks]
