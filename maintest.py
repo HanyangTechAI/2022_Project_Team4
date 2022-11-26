@@ -40,7 +40,6 @@ def process():
         videoId = input()
         output = api.Process(videoId)#지금은 output이 mask array임. 도현이 형이 완성 후 파일로 저장.
 
-        os.makedirs(videoId, exist_ok=True)
         palette = Image.open(path.expanduser('./Model/palette/00000.png')).getpalette()
         os.makedirs("outputVideos", exist_ok=True)
         this_out_path = path.join("outputVideos", videoId)
