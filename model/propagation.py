@@ -41,7 +41,7 @@ class propagation:
         self.frameSize.append(torch.tensor([len(video[0][0])]))
         
         #model for Mask propagation
-        prop_saved = torch.load('./Mask-Propagation/saves/propagation_model.pth')
+        prop_saved = torch.load('./Model/Mask-Propagation/saves/propagation_model.pth')
         top_k = None
         self.prop_model = PropagationNetwork(top_k=top_k, km=5.6).cuda().eval()
         self.prop_model.load_state_dict(prop_saved)

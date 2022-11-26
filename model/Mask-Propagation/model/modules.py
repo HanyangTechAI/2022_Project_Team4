@@ -7,7 +7,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import models
 
-from model import mod_resnet
+from . import mod_resnet
 
 
 class ResBlock(nn.Module):

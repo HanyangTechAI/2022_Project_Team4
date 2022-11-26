@@ -14,6 +14,8 @@ parser.add_argument('--output', default='none')
 args = parser.parse_args()
 
 
+
+
 torch.autograd.set_grad_enabled(False)
 
 cap = cv2.VideoCapture(args.file)#front에서 받은 mp4파일을 array로 변환.
@@ -32,6 +34,7 @@ while(cap.isOpened()):
         outList.append(torch.tensor(frame))
     else: 
         break
+    
 (major_ver, minor_ver, subminor_ver) = (cv2.__version__).split('.')
 if int(major_ver)  < 3 :
     fps = float(cap.get(cv2.cv.CV_CAP_PROP_FPS))
@@ -50,10 +53,9 @@ propa = propagation(outList,int(int(args.second)*fps))#front에서 mp4파일과 
 
 XYCoordinates = []
 def getXYCoordinates(event, x, y, flags, param):
+    global XYCoordinates
     if event == cv2.EVENT_LBUTTONDOWN:
-        XYCoordinates.append([x,y])
-
-
+        XYCoordinates= [x,y]
 
 cv2.namedWindow("images")
 cv2.setMouseCallback("images", getXYCoordinates)

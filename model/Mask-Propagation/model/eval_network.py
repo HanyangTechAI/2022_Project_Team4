@@ -13,8 +13,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from model.modules import *
-from model.network import Decoder
+from .modules import *
+from .network import Decoder
 
 
 def make_gaussian(y_idx, x_idx, height, width, sigma=7):
