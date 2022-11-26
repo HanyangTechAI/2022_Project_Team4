@@ -22,7 +22,7 @@ def createClass(videoId,second):
     while(cap.isOpened()):
         ret, frame = cap.read()
         if ret == True:
-            outList.append(torch.tensor(frame))
+            outList.append(frame)
         else: 
             break
         

@@ -78,7 +78,7 @@ for data in tqdm(test_loader):
 
     processor = InferenceCore(prop_model, rgb, k)
     print(msk[:,0].shape)
-    quit()
+
     processor.interact(msk[:,0], 0, rgb.shape[1])
 
     # Do unpad -> upsample to original size 

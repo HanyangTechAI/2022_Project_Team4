@@ -19,7 +19,7 @@ CONST_e = 2.718282
 class propagation:
     def __init__(self,video,index):
         if(index > 0 and index <= len(video)):
-            self.indexFrame = video[index-1].numpy()
+            self.indexFrame = video[index-1]
         else:
             print("index out of range. input should be in range 1~",len(video))
             quit()
@@ -27,13 +27,12 @@ class propagation:
         self.mask = None
         if(not(index == 1)):
             self.framesFront = video[:index]
-            self.framesFront.reverse()
-            self.framesFront = torch.stack(self.framesFront, 0).permute((0, 3, 1, 2))[None,:,:,:,:].cpu()
+            self.framesFront = torch.tensor(self.framesFront[::-1]).permute((0, 3, 1, 2))[None,:,:,:,:].cpu()
             self.framesFront = (self.framesFront -127.5)/127.5*CONST_e
 
         if(not(index == len(video))):
             self.frames = video[index:]
-            self.frames = torch.stack(self.frames, 0).permute((0, 3, 1, 2))[None,:,:,:,:].cpu()
+            self.frames = torch.tensor(self.frames).permute((0, 3, 1, 2))[None,:,:,:,:].cpu()
             self.frames = (self.frames -127.5)/127.5*CONST_e
 
         self.frameSize = []
