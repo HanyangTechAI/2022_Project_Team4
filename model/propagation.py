@@ -72,24 +72,17 @@ class propagation:
         return (int(self.frameSize[1][0]),int(self.frameSize[0][0]))
 
     def getSelectedMask(self, XYCoordinates):
-        selected_instances = []
-        indexOfInstance = []
         masks = self.output["instances"].pred_masks
 
-        for i in XYCoordinates:
-            for j in range(masks.shape[0]):
-                if(masks[j][i[1]][i[0]] == True):
-                    if(not(j in indexOfInstance)):
-                        indexOfInstance.append(j)
-                        selected_instances.append(self.output["instances"][j])
+
+        for j in range(masks.shape[0]):
+            if(masks[j][XYCoordinates[1]][XYCoordinates[0]] == True):
+                selected_instances = self.output["instances"][j]
+                break
 
         #여기서 self.mask를 지정합시다
-        mask = selected_instances[0].pred_masks
 
-        for instance in selected_instances:
-            mask = torch.logical_or(instance.pred_masks, mask)
-
-        self.mask = mask.unsqueeze(0).float().cuda()
+        self.mask = selected_instances.pred_masks.unsqueeze(0).float().cuda()
 
         v = Visualizer(self.indexFrame[:, :, ::-1],
                scale=0.8,
@@ -97,7 +90,7 @@ class propagation:
                instance_mode=ColorMode.IMAGE
                )
 
-        return v.draw_instance_predictions(self.output["instances"].cat(selected_instances).to("cpu")).get_image()[:, :, ::-1]
+        return v.draw_instance_predictions(selected_instances.to("cpu")).get_image()[:, :, ::-1]
 
 
 
