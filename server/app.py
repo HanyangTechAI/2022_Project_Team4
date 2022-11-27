@@ -22,6 +22,7 @@ def getVideoId():
     id = request.args.get('id')
     time = request.json['time']
     print(id, time)
+    return "success"
 
 @app.route('/region', methods = ['GET'])
 def returnRegion():    
@@ -35,6 +36,13 @@ def getCoordinates():
     x = request.json['x']
     y = request.json['y']
     print(id, x, y)
+    return "success"
+    
+@app.route('/video', methods = ['GET'])
+def returnVideo():    
+    id = request.args.get('id')
+    return send_file(config.default_dir + 'b.mp4')
+
 		
 if __name__ == '__main__':
   	app.run(host = '0.0.0.0', port = 9091) # running the flask app
