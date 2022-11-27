@@ -7,10 +7,10 @@ async function GetXY(e) {
     console.log(coordinateY);
 
     let data = JSON.stringify({
-        coordinateX : coordinateX,
-        coordinateY : coordinateY,
+        x : coordinateX,
+        y : coordinateY,
     });
-    return axios.post("http://127.0.0.1:5000/getXY", data, {headers:{"Content-Type" : "application/json"}})
+    return axios.post("http://172.16.166.231:9091/coordinates?id=" + sessionStorage.getItem('id'), data, {headers:{"Content-Type" : "application/json"}})
     .then((response)=> {
         if(response.data === "success"){
             console.log(response.data)

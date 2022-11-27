@@ -9,7 +9,8 @@ async function getCurTime(){
         time: x.currentTime,
     });
 
-    return axios.post("http://127.0.0.1:5000/time_flame", data, {headers:{"Content-Type" : "application/json"}})
+    //http://192.168.0.19:9091/time?id=
+    return await axios.post("http://172.16.166.231:9091/time?id="+sessionStorage.getItem('id'), data, {headers:{"Content-Type" : "application/json"}})
     .then((response)=> {
         if(response.data === "success"){
             console.log(response.data)
