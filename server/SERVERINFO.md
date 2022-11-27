@@ -16,9 +16,12 @@
 4. /coordinates
 - no parameters
 - receives the id and x, y coordinates
-5. /video
+5. /mask
+- no parameters
+- repeatedly returns the masked image with x, y coordinates if the user doesn't confirm
+- processes video if user confirms
+6. /video
 - no parameters
 - receives the video id
-- generates the video by calling the function with the video id as the parameter
-- returns the video via `send_file`
+- returns the processed video via `send_file`
 
