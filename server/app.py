@@ -38,29 +38,27 @@ def returnRegion():
 
 @app.route('/coordinates', methods = ['POST'])
 def getCoordinates():
-    # here we want to get the value of id (i.e. ?id=some-value)
-    id = request.args.get('id')
+    id = request.args.get('id') # get the value of id (i.e. ?id=some-value)
+
     x = request.json['x']
     y = request.json['y']
     print(id, x, y)
     return "success"
 
 @app.route('/mask', methods = ['GET', 'POST'])
-def returnMask():
-    # selected_mask = api.getSelectedMask(id, [x, y])
-    # return send_file(selected_mask)
-    
+def returnMask():    
     if request.method == 'GET':
+        # selected_mask = api.getSelectedMask(id, [x, y])
+        # return send_file(selected_mask, mimetype = 'image/jpg')
         return send_file(config.default_dir + 'c.jpg', mimetype = 'image/jpg')
     
-    # if request.json['isConfirmed']:
     # api.process(id)
     return "success"
 
 @app.route('/video', methods = ['GET'])
 def returnVideo():    
     id = request.args.get('id')
-    # return processed video with id
+    # must return the processed video with id
     return send_file(config.default_dir + 'b.mp4')
 
 if __name__ == '__main__':
