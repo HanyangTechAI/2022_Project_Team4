@@ -12,7 +12,7 @@ function Main3(){
     });
 
     useEffect(() => {
-        axios.get("http://172.16.166.231:9091/region?id="+sessionStorage.getItem('id'), {responseType: 'blob'}).then(
+        axios.get("http://192.168.123.107:9091/region?id="+sessionStorage.getItem('id'), {responseType: 'blob'}).then(
         (response)=> {
             console.log(response);
             console.log(response.data);
