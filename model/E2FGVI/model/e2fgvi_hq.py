@@ -5,10 +5,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from model.modules.flow_comp import SPyNet
-from model.modules.feat_prop import BidirectionalPropagation, SecondOrderDeformableAlignment
-from model.modules.tfocal_transformer_hq import TemporalFocalTransformerBlock, SoftSplit, SoftComp
-from model.modules.spectral_norm import spectral_norm as _spectral_norm
+from .modules.flow_comp import SPyNet
+from .modules.feat_prop import BidirectionalPropagation, SecondOrderDeformableAlignment
+from .modules.tfocal_transformer_hq import TemporalFocalTransformerBlock, SoftSplit, SoftComp
+from .modules.spectral_norm import spectral_norm as _spectral_norm
 
 
 class BaseNetwork(nn.Module):
@@ -101,11 +101,14 @@ class Encoder(nn.Module):
             if i == 8:
                 x0 = out
                 _, _, h, w = x0.size()
+
             if i > 8 and i % 2 == 0:
                 g = self.group[(i - 8) // 2]
                 x = x0.view(bt, g, -1, h, w)
                 o = out.view(bt, g, -1, h, w)
                 out = torch.cat([x, o], 2).view(bt, -1, h, w)
+                del x, o
+                torch.cuda.empty_cache()
             out = layer(out)
         return out
 
@@ -222,8 +225,12 @@ class InpaintGenerator(BaseNetwork):
             -1, c, h // 4, w // 4)
         mlf_2 = masked_local_frames[:, 1:, :, :, :].reshape(
             -1, c, h // 4, w // 4)
+        del masked_local_frames
+        torch.cuda.empty_cache()
         pred_flows_forward = self.update_spynet(mlf_1, mlf_2)
         pred_flows_backward = self.update_spynet(mlf_2, mlf_1)
+        del mlf_1, mlf_2
+        torch.cuda.empty_cache()
 
         pred_flows_forward = pred_flows_forward.view(b, l_t - 1, 2, h // 4,
                                                      w // 4)
@@ -239,15 +246,21 @@ class InpaintGenerator(BaseNetwork):
         # normalization before feeding into the flow completion module
         masked_local_frames = (masked_frames[:, :l_t, ...] + 1) / 2
         pred_flows = self.forward_bidirect_flow(masked_local_frames)
+        del masked_local_frames
+        torch.cuda.empty_cache()
 
         # extracting features and performing the feature propagation on local features
         enc_feat = self.encoder(masked_frames.view(b * t, ori_c, ori_h, ori_w))
+        del masked_frames
+        torch.cuda.empty_cache()
         _, c, h, w = enc_feat.size()
         fold_output_size = (h, w)
         local_feat = enc_feat.view(b, t, c, h, w)[:, :l_t, ...]
         ref_feat = enc_feat.view(b, t, c, h, w)[:, l_t:, ...]
         local_feat = self.feat_prop_module(local_feat, pred_flows[0],
                                            pred_flows[1])
+        del pred_flows
+        torch.cuda.empty_cache()
         enc_feat = torch.cat((local_feat, ref_feat), dim=1)
 
         # content hallucination through stacking multiple temporal focal transformer blocks
@@ -256,11 +269,15 @@ class InpaintGenerator(BaseNetwork):
         trans_feat = self.sc(trans_feat[0], t, fold_output_size)
         trans_feat = trans_feat.view(b, t, -1, h, w)
         enc_feat = enc_feat + trans_feat
+        del trans_feat
+        torch.cuda.empty_cache()
 
         # decode frames from features
         output = self.decoder(enc_feat.view(b * t, c, h, w))
+        del enc_feat
+        torch.cuda.empty_cache()
         output = torch.tanh(output)
-        return output, pred_flows
+        return output
 
 
 # ######################################################################
@@ -337,10 +354,16 @@ class Discriminator(BaseNetwork):
         # T, C, H, W = xs.shape (old)
         # B, T, C, H, W (new)
         xs_t = torch.transpose(xs, 1, 2)
+        del xs
+        torch.cuda.empty_cache()
         feat = self.conv(xs_t)
+        del xs_t
+        torch.cuda.empty_cache()
         if self.use_sigmoid:
             feat = torch.sigmoid(feat)
         out = torch.transpose(feat, 1, 2)  # B, T, C, H, W
+        del feat
+        torch.cuda.empty_cache()
         return out
 
 

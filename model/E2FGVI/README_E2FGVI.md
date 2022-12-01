@@ -13,7 +13,8 @@ output = model.inference(frames,masks)
 """
 VideoInpaintingModel's arguments are device, ref_index, num_ref, neighbor_stride.
 You can adjust the arguments' value.
-Variable 'frames' and 'masks' are both 'np.ndarray'. [frames's shape: (T,H,W,3) / masks's shape: (T,H,W)]
+Variable 'frames' is the list of arrays. [array(frame)'s shape: (H,W,3) / len(frames) == T]  
+Variable 'masks' is array. [masks's shape: (T,H,W)]
 """
 </code>
 </pre>

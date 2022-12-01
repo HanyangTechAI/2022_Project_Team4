@@ -7,7 +7,7 @@ import torch.nn as nn
 from mmcv.ops import ModulatedDeformConv2d, modulated_deform_conv2d
 from mmcv.cnn import constant_init
 
-from model.modules.flow_comp import flow_warp
+from .flow_comp import flow_warp
 
 
 class SecondOrderDeformableAlignment(ModulatedDeformConv2d):
@@ -35,19 +35,33 @@ class SecondOrderDeformableAlignment(ModulatedDeformConv2d):
     def forward(self, x, extra_feat, flow_1, flow_2):
         extra_feat = torch.cat([extra_feat, flow_1, flow_2], dim=1)
         out = self.conv_offset(extra_feat)
+        del extra_feat
+        torch.cuda.empty_cache()
         o1, o2, mask = torch.chunk(out, 3, dim=1)
+        del out
+        torch.cuda.empty_cache()
 
         # offset
         offset = self.max_residue_magnitude * torch.tanh(
             torch.cat((o1, o2), dim=1))
+        del o1, o2
+        torch.cuda.empty_cache()
         offset_1, offset_2 = torch.chunk(offset, 2, dim=1)
+        del offset
+        torch.cuda.empty_cache()
         offset_1 = offset_1 + flow_1.flip(1).repeat(1,
                                                     offset_1.size(1) // 2, 1,
                                                     1)
+        del flow_1
+        torch.cuda.empty_cache()
         offset_2 = offset_2 + flow_2.flip(1).repeat(1,
                                                     offset_2.size(1) // 2, 1,
                                                     1)
+        del flow_2
+        torch.cuda.empty_cache()
         offset = torch.cat([offset_1, offset_2], dim=1)
+        del offset_1, offset_2
+        torch.cuda.empty_cache()
 
         # mask
         mask = torch.sigmoid(mask)
@@ -99,9 +113,14 @@ class BidirectionalPropagation(nn.Module):
             if 'backward' in module_name:
                 frame_idx = frame_idx[::-1]
                 flows = flows_backward
+                del flows_backward
+                torch.cuda.empty_cache()
             else:
                 flows = flows_forward
-
+                del flows_forward
+                torch.cuda.empty_cache()
+            
+            
             feat_prop = x.new_zeros(b, self.channel, h, w)
             for i, idx in enumerate(frame_idx):
                 feat_current = feats['spatial'][mapping_idx[idx]]
@@ -114,6 +133,7 @@ class BidirectionalPropagation(nn.Module):
                     feat_n2 = torch.zeros_like(feat_prop)
                     flow_n2 = torch.zeros_like(flow_n1)
                     cond_n2 = torch.zeros_like(cond_n1)
+                    
                     if i > 1:
                         feat_n2 = feats[module_name][-2]
                         flow_n2 = flows[:, flow_idx[i - 1], :, :, :]
@@ -121,9 +141,15 @@ class BidirectionalPropagation(nn.Module):
                             flow_n2, flow_n1.permute(0, 2, 3, 1))
                         cond_n2 = flow_warp(feat_n2,
                                             flow_n2.permute(0, 2, 3, 1))
+                        
+                    
 
                     cond = torch.cat([cond_n1, feat_current, cond_n2], dim=1)
+                    del cond_n1, cond_n2
+                    torch.cuda.empty_cache()
                     feat_prop = torch.cat([feat_prop, feat_n2], dim=1)
+                    del feat_n2
+                    torch.cuda.empty_cache()
                     feat_prop = self.deform_align[module_name](feat_prop, cond,
                                                                flow_n1,
                                                                flow_n2)
@@ -132,6 +158,8 @@ class BidirectionalPropagation(nn.Module):
                     feats[k][idx]
                     for k in feats if k not in ['spatial', module_name]
                 ] + [feat_prop]
+                
+                del feat_current
 
                 feat = torch.cat(feat, dim=1)
                 feat_prop = feat_prop + self.backbone[module_name](feat)
@@ -145,5 +173,7 @@ class BidirectionalPropagation(nn.Module):
             align_feats = [feats[k].pop(0) for k in feats if k != 'spatial']
             align_feats = torch.cat(align_feats, dim=1)
             outputs.append(self.fusion(align_feats))
+            del align_feats
+            torch.cuda.empty_cache()
 
         return torch.stack(outputs, dim=1) + x

@@ -130,6 +130,8 @@ class SPyNet(nn.Module):
                           flow_up.permute(0, 2, 3, 1).contiguous(),
                           padding_mode='border'), flow_up
             ], 1))
+        del flow_up
+        torch.cuda.empty_cache()
 
         return flow
 
@@ -161,6 +163,8 @@ class SPyNet(nn.Module):
                              size=(h, w),
                              mode='bilinear',
                              align_corners=False)
+        del ref, supp
+        torch.cuda.empty_cache()
 
         # adjust the flow values
         flow[:, 0, :, :] *= float(w) / float(w_up)
@@ -369,17 +373,23 @@ def flow_warp(x,
     grid_y, grid_x = torch.meshgrid(torch.arange(0, h), torch.arange(0, w))
     grid = torch.stack((grid_x, grid_y), 2).type_as(x)  # (w, h, 2)
     grid.requires_grad = False
+    del grid_y, grid_x
+    torch.cuda.empty_cache()
 
     grid_flow = grid + flow
     # scale grid_flow to [-1,1]
     grid_flow_x = 2.0 * grid_flow[:, :, :, 0] / max(w - 1, 1) - 1.0
     grid_flow_y = 2.0 * grid_flow[:, :, :, 1] / max(h - 1, 1) - 1.0
     grid_flow = torch.stack((grid_flow_x, grid_flow_y), dim=3)
+    del grid_flow_x, grid_flow_y
+    torch.cuda.empty_cache()
     output = F.grid_sample(x,
                            grid_flow,
                            mode=interpolation,
                            padding_mode=padding_mode,
                            align_corners=align_corners)
+    del grid_flow
+    torch.cuda.empty_cache()
     return output
 
 

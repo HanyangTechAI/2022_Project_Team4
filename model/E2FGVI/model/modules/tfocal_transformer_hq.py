@@ -38,6 +38,8 @@ class SoftSplit(nn.Module):
                   self.t2t_param['stride'][1] + 1)
 
         feat = self.t2t(x)
+        del x
+        torch.cuda.empty_cache()
         feat = feat.permute(0, 2, 1)
         # feat shape [b*t, num_vec, ks*ks*c]
         feat = self.embedding(feat)
@@ -68,6 +70,8 @@ class SoftComp(nn.Module):
         b_, _, _, _, c_ = x.shape
         x = x.view(b_, -1, c_)
         feat = self.embedding(x)
+        del x
+        torch.cuda.empty_cache()
         b, _, c = feat.size()
         feat = feat.view(b * t, -1, c).permute(0, 2, 1)
         feat = F.fold(feat,
@@ -132,6 +136,8 @@ def window_partition(x, window_size):
                window_size[1], C)
     windows = x.permute(0, 2, 4, 1, 3, 5, 6).contiguous().view(
         -1, T * window_size[0] * window_size[1], C)
+    del x
+    torch.cuda.empty_cache()
     return windows
 
 
@@ -147,6 +153,8 @@ def window_partition_noreshape(x, window_size):
     x = x.view(B, T, H // window_size[0], window_size[0], W // window_size[1],
                window_size[1], C)
     windows = x.permute(0, 2, 4, 1, 3, 5, 6).contiguous()
+    del x
+    torch.cuda.empty_cache()
     return windows
 
 
@@ -164,6 +172,8 @@ def window_reverse(windows, window_size, T, H, W):
     B = int(windows.shape[0] / (H * W / window_size[0] / window_size[1]))
     x = windows.view(B, H // window_size[0], W // window_size[1], T,
                      window_size[0], window_size[1], -1)
+    del windows
+    torch.cuda.empty_cache()
     x = x.permute(0, 3, 1, 4, 2, 5, 6).contiguous().view(B, T, H, W, -1)
     return x
 
@@ -242,6 +252,8 @@ class WindowAttention(nn.Module):
         qkv = self.qkv(x).reshape(B, T, nH, nW, 3,
                                   C).permute(4, 0, 1, 2, 3, 5).contiguous()
         q, k, v = qkv[0], qkv[1], qkv[2]  # B, T, nH, nW, C
+        del qkv
+        torch.cuda.empty_cache()
 
         # partition q map
         (q_windows, k_windows, v_windows) = map(
@@ -250,6 +262,8 @@ class WindowAttention(nn.Module):
                 num_heads, C // self.num_heads).permute(0, 3, 1, 2, 4).
             contiguous().view(-1, self.num_heads, T * self.window_size[
                 0] * self.window_size[1], C // self.num_heads), (q, k, v))
+        del q
+        torch.cuda.empty_cache()
         # q(k/v)_windows shape : [16, 4, 225, 128]
 
         if any(i > 0 for i in self.expand_size) and self.focal_level > 0:
@@ -273,21 +287,31 @@ class WindowAttention(nn.Module):
                                      shifts=(self.expand_size[0], self.
                                              expand_size[1]),
                                      dims=(2, 3)), (k, v))
+            del k, v
+            torch.cuda.empty_cache()
 
             (k_tl_windows, k_tr_windows, k_bl_windows, k_br_windows) = map(
                 lambda t: window_partition(t, self.window_size).view(
                     -1, T, self.window_size[0] * self.window_size[1], self.
                     num_heads, C // self.num_heads), (k_tl, k_tr, k_bl, k_br))
+            del k_tl, k_tr, k_bl, k_br
+            torch.cuda.empty_cache()
             (v_tl_windows, v_tr_windows, v_bl_windows, v_br_windows) = map(
                 lambda t: window_partition(t, self.window_size).view(
                     -1, T, self.window_size[0] * self.window_size[1], self.
                     num_heads, C // self.num_heads), (v_tl, v_tr, v_bl, v_br))
+            del v_tl, v_tr, v_bl, v_br
+            torch.cuda.empty_cache()
             k_rolled = torch.cat(
                 (k_tl_windows, k_tr_windows, k_bl_windows, k_br_windows),
                 2).permute(0, 3, 1, 2, 4).contiguous()
+            del k_tl_windows, k_tr_windows, k_bl_windows, k_br_windows
+            torch.cuda.empty_cache()
             v_rolled = torch.cat(
                 (v_tl_windows, v_tr_windows, v_bl_windows, v_br_windows),
                 2).permute(0, 3, 1, 2, 4).contiguous()
+            del v_tl_windows, v_tr_windows, v_bl_windows, v_br_windows
+            torch.cuda.empty_cache()
 
             # mask out tokens in current window
             k_rolled = k_rolled[:, :, :, self.valid_ind_rolled]
@@ -302,7 +326,9 @@ class WindowAttention(nn.Module):
         else:
             k_rolled = k_windows
             v_rolled = v_windows
-
+        
+        del k_windows, v_windows
+        torch.cuda.empty_cache()
         # q(k/v)_windows shape : [16, 4, 225, 128]
         # k_rolled.shape : [16, 4, 5, 165, 128]
         # ideal expanded window size 153 ((5+2*2)*(9+2*4))
@@ -325,6 +351,8 @@ class WindowAttention(nn.Module):
                 unfolded_mask = self.unfolds[k](mask.unsqueeze(1)).view(
                     1, T, self.unfolds[k].kernel_size[0], self.unfolds[k].kernel_size[1], -1).permute(4, 1, 2, 3, 0).contiguous().\
                     view(nWh*nWw // stride // stride, -1, 1)
+                del mask
+                torch.cuda.empty_cache()
 
                 if k > 0:
                     valid_ind_unfold_k = getattr(
@@ -344,6 +372,8 @@ class WindowAttention(nn.Module):
                                                           nWw).contiguous()
                 # B*T, C, nWh, nWw
                 k_pooled_k, v_pooled_k = qkv_pooled[1], qkv_pooled[2]
+                del qkv_pooled
+                torch.cuda.empty_cache()
                 # k_pooled_k shape: [5, 512, 4, 4]
                 # self.unfolds[k](k_pooled_k) shape: [5, 23040 (512 * 5 * 9 ), 16]
 
@@ -381,15 +411,21 @@ class WindowAttention(nn.Module):
         else:
             k_all = k_rolled
             v_all = v_rolled
-
+        
+        del k_pooled, v_pooled, v_rolled
+        torch.cuda.empty_cache()
         N = k_all.shape[-2]
         q_windows = q_windows * self.scale
         # B*nW, nHead, T*window_size*window_size, T*focal_window_size*focal_window_size
         attn = (q_windows @ k_all.transpose(-2, -1))
+        del q_windows, k_all
+        torch.cuda.empty_cache()
         # T * 45
         window_area = T * self.window_size[0] * self.window_size[1]
         # T * 165
         window_area_rolled = k_rolled.shape[2]
+        del k_rolled
+        torch.cuda.empty_cache()
 
         if self.pool_method != "none" and self.focal_level > 1:
             offset = window_area_rolled
@@ -421,6 +457,8 @@ class WindowAttention(nn.Module):
 
         x = (attn @ v_all).transpose(1, 2).reshape(attn.shape[0], window_area,
                                                    C)
+        del attn, v_all
+        torch.cuda.empty_cache()
         x = self.proj(x)
         return x
 
@@ -499,6 +537,8 @@ class TemporalFocalTransformerBlock(nn.Module):
         x = self.norm1(x)
 
         shifted_x = x
+        del x
+        torch.cuda.empty_cache()
 
         x_windows_all = [shifted_x]
         x_window_masks_all = [None]
@@ -549,6 +589,8 @@ class TemporalFocalTransformerBlock(nn.Module):
 
         # nW*B, T*window_size*window_size, C
         attn_windows = self.attn(x_windows_all, mask_all=x_window_masks_all)
+        del x_windows_all, x_window_masks_all
+        torch.cuda.empty_cache()
 
         # merge windows
         attn_windows = attn_windows.view(-1, T, self.window_size[0],
@@ -558,6 +600,8 @@ class TemporalFocalTransformerBlock(nn.Module):
 
         # FFN
         x = shortcut + shifted_x
+        del shortcut, shifted_x
+        torch.cuda.empty_cache()
         y = self.norm2(x)
         x = x + self.mlp(y.view(B, T * H * W, C), output_size).view(
             B, T, H, W, C)
