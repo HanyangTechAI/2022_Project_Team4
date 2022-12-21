@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import '../css/main2.css'
 import HandleOutput from './getVideo.js';
 
@@ -8,7 +8,7 @@ function Main6(){
             <div className = "contents">
                 변환된 비디오를 다운로드하세요
             </div>
-            <video className = "videoDisplay" controls={true} autoPlay={true} type = "video/mp4" />
+            {/* <video className = "videoDisplay" controls={true} autoPlay={true} type = "video/mp4" /> */}
             <div className = "selected" onClick={HandleOutput}>
                 다운로드
             </div>

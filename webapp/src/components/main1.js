@@ -57,7 +57,7 @@ class Main1 extends Component{
         }
 
         //http://192.168.0.19:9091/upload
-        return axios.post("http://172.16.166.231:9091/upload", formData, config).then( //(업로드할 경로, 보낼 것)
+        return axios.post("https://3c69-112-156-88-200.jp.ngrok.io/upload", formData, config).then( //(업로드할 경로, 보낼 것)
         //127.0.0.1 local 컴퓨터 주소 5000 플라스크 기본 포트
             (response) => {
                 // if(response.data === "SUCCESS"){
@@ -70,36 +70,34 @@ class Main1 extends Component{
                 //     alert("비디오 업로드 실패")
                 // }
 
-                if(response.status==200){ //성공하면 페이지 이동하게 구현하기
+                if(response.status===200){ //성공하면 페이지 이동하게 구현하기
                     sessionStorage.setItem('id', response.data);
                     console.log(sessionStorage.getItem('id'));
                 }
             }
         )
-    }
-    async handleOutput(){
-        console.log(1);
-        return axios.get({
-        //url: "http://~~" 파일 다운로드 요청 API
-            url: "http://127.0.0.1:5000/fileDownload/logo.jpg",
-            method: "GET",
-            responseType: "blob", //받아올 데이터 타입 정하기. blob = binary Large Object 큰 데이터들 다룰 때 사용. 이미지, 오디오, 영상 등
-        }
-        ).then((response) => {
-            const blob = new Blob([response.data]); //전달 받은 데이터를 blob으로 변환
-            const fileObjectUrl = window.URL.createObjectURL(blob);
+        // return axios.post("https://3c69-112-156-88-200.jp.ngrok.io", formData, config).then( //(업로드할 경로, 보낼 것)
+        // //127.0.0.1 local 컴퓨터 주소 5000 플라스크 기본 포트
+        //     (response) => {
+        //         // if(response.data === "SUCCESS"){
+        //         //     // console.log(response.data); // sessionStorage.setItem('id', response.data);로 바꾸기
+        //         //     // sessionStorage.setItem('test', 'hello'); // response.data는 string type이어야함. return type string.
+        //         //     // console.log(sessionStorage.getItem('test'));
+        //         //     console.log("success!!!!!!")
+        //         // }
+        //         // else{
+        //         //     alert("비디오 업로드 실패")
+        //         // }
 
-            const link = document.createElement("a");
-            link.href = fileObjectUrl;
-            link.style.display = "none";
+        //         console.log(response.data);
 
-            link.download = "download_Success";
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-
-            window.URL.revokeObjectURL(fileObjectUrl);
-        });
+        //         // if(response.status===200){ //성공하면 페이지 이동하게 구현하기
+        //         //     sessionStorage.setItem('id', response.data);
+        //         //     console.log(sessionStorage.getItem('id'));
+        //         // }
+        //     }
+        // )
+        
     }
     render(){
         return(

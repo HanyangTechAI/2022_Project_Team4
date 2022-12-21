@@ -4,6 +4,7 @@ import default_image from '../images/default_image.png';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Ok from './ok.js';
+import Loading from './loading.js';
 
 function Main4(){
     const [file, setFile] = useState({
@@ -11,7 +12,7 @@ function Main4(){
     });
 
     useEffect(() => {
-        axios.get("http://172.16.166.231:9091/mask?id="+sessionStorage.getItem('id'), {responseType: 'blob'}).then(
+        axios.get("https://3c69-112-156-88-200.jp.ngrok.io/mask?id="+sessionStorage.getItem('id'), {responseType: 'blob'}).then(
         (response)=> {
             console.log(response);
             console.log(response.data);
