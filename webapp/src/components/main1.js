@@ -57,7 +57,7 @@ class Main1 extends Component{
         }
 
         //http://192.168.0.19:9091/upload
-        return axios.post("http://192.168.123.107:9091/upload", formData, config).then( //(업로드할 경로, 보낼 것)
+        return axios.post("https://3c69-112-156-88-200.jp.ngrok.io/upload", formData, config).then( //(업로드할 경로, 보낼 것)
         //127.0.0.1 local 컴퓨터 주소 5000 플라스크 기본 포트
             (response) => {
                 // if(response.data === "SUCCESS"){
@@ -76,6 +76,28 @@ class Main1 extends Component{
                 }
             }
         )
+        // return axios.post("https://3c69-112-156-88-200.jp.ngrok.io", formData, config).then( //(업로드할 경로, 보낼 것)
+        // //127.0.0.1 local 컴퓨터 주소 5000 플라스크 기본 포트
+        //     (response) => {
+        //         // if(response.data === "SUCCESS"){
+        //         //     // console.log(response.data); // sessionStorage.setItem('id', response.data);로 바꾸기
+        //         //     // sessionStorage.setItem('test', 'hello'); // response.data는 string type이어야함. return type string.
+        //         //     // console.log(sessionStorage.getItem('test'));
+        //         //     console.log("success!!!!!!")
+        //         // }
+        //         // else{
+        //         //     alert("비디오 업로드 실패")
+        //         // }
+
+        //         console.log(response.data);
+
+        //         // if(response.status===200){ //성공하면 페이지 이동하게 구현하기
+        //         //     sessionStorage.setItem('id', response.data);
+        //         //     console.log(sessionStorage.getItem('id'));
+        //         // }
+        //     }
+        // )
+        
     }
     render(){
         return(

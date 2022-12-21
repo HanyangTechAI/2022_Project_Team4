@@ -12,7 +12,7 @@ function Main5(){
 
     const mainApi = useCallback(async () => {
         // setLoading(true); // api 호출 전에 true로 변경하여 로딩화면 띄우기
-        await axios.post("http://192.168.123.107:9091/mask?id="+sessionStorage.getItem('id'), data, {headers:{"Content-Type" : "application/json"}})
+        await axios.post("https://3c69-112-156-88-200.jp.ngrok.io/mask?id="+sessionStorage.getItem('id'), data, {headers:{"Content-Type" : "application/json"}})
         .then((response)=> {
         if(response.data === "success"){
             console.log(response.data);
