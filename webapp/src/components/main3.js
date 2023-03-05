@@ -1,31 +1,28 @@
 import React, {useState, useEffect} from 'react';
 import '../css/main2.css';
-import default_image from '../images/default_image.png';
 import { Link } from 'react-router-dom';
 import GetXY from './getXY.js';
-import GetImage from './getImage.js';
-import axios from 'axios';
 
-function Main3(){
+function Main3(props){
     const [file, setFile] = useState({
-        preview_image: {default_image},
+        preview_image: props.image,
     });
 
-    useEffect(() => {
-        axios.get("https://3c69-112-156-88-200.jp.ngrok.io/region?id="+sessionStorage.getItem('id'), {responseType: 'blob'}).then(
-        (response)=> {
-            console.log(response);
-            console.log(response.data);
-            const fileReader = new FileReader();
-            fileReader.readAsDataURL(response.data)
-            fileReader.onload = () => {
-            const previewImage = fileReader.result;
-            console.log(previewImage);
-            setFile({
-                preview_image: previewImage,
-        })
-    }})
-    },[]);
+    // useEffect(() => {
+    //     axios.get("http://192.168.123.108:9091/region?id="+sessionStorage.getItem('id'), {responseType: 'blob'}).then(
+    //     (response)=> {
+    //         console.log(response);
+    //         console.log(response.data);
+    //         const fileReader = new FileReader();
+    //         fileReader.readAsDataURL(response.data)
+    //         fileReader.onload = () => {
+    //         const previewImage = fileReader.result;
+    //         console.log(previewImage);
+    //         setFile({
+    //             preview_image: previewImage,
+    //     })
+    // }})
+    // },[]);
     // axios.get<Blob>( "http://172.16.166.231:9091/region?id="+sessionStorage.getItem('id'), { headers: {}, responseType: 'blob' }).then(res => {
     //     const myFile = new File([res.data], 'imageName')
     //     console.log(myFile)
@@ -99,7 +96,7 @@ function Main3(){
             <div className = "contents">
                 비디오에서 삭제하고 싶은 사물 / 사람의 누끼를 골라주세요 !
             </div>
-            <Link to='/main4'>
+            <Link to='/main3to4'>
                 <div>
                     <img className='preview_image' src = {file.preview_image} onClick= {e=>{GetXY(e)}}/>
                 </div>

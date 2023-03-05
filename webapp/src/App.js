@@ -3,11 +3,13 @@ import './App.css'
 import Header from './components/header.js';
 import Footer from './components/footer.js'
 import Main1 from './components/main1.js';
-import Main2 from './components/main2.js'
+import Main2 from './components/main2.js';
+import Main2to3 from "./components/main2to3.js"
 import Main3 from './components/main3.js';
+import Main3to4 from './components/main3to4.js';
 import Main4 from './components/main4.js';
+import Main4to5 from './components/main4to5.js';
 import Main5 from './components/main5.js';
-import Main6 from './components/main6.js';
 import {Route, Routes, Link } from "react-router-dom";
 
 const App = () => {
@@ -18,10 +20,12 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Main1 />} />
             <Route path="/main2" element={<Main2 />} />
+            <Route path="/main2to3" element = {<Main2to3/>} />
             <Route path="/main3" element={<Main3 />}/>
+            <Route path="/main3to4" element = {<Main3to4/>} />
             <Route path="/main4" element={<Main4 />}/>
+            <Route path="/main4to5" element={<Main4to5 />}/>
             <Route path="/main5" element={<Main5 />}/>
-            <Route path="/main6" element={<Main6 />}/>
           </Routes>
       </div>
       <Footer/>

@@ -10,7 +10,7 @@ async function GetXY(e) {
         x : coordinateX,
         y : coordinateY,
     });
-    return axios.post("https://3c69-112-156-88-200.jp.ngrok.io/coordinates?id=" + sessionStorage.getItem('id'), data, {headers:{"Content-Type" : "application/json"}})
+    return axios.post("http://192.168.123.108:9091/coordinates?id=" + sessionStorage.getItem('id'), data, {headers:{"Content-Type" : "application/json"}})
     .then((response)=> {
         if(response.data === "success"){
             console.log(response.data)

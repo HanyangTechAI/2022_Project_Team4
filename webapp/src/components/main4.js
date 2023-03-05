@@ -1,31 +1,28 @@
 import React, {useState, useEffect} from 'react';
 import '../css/main2.css';
-import default_image from '../images/default_image.png';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import Ok from './ok.js';
-import Loading from './loading.js';
 
-function Main4(){
+function Main4(props){
     const [file, setFile] = useState({
-        preview_image: {default_image},
+        preview_image: props.image,
     });
 
-    useEffect(() => {
-        axios.get("https://3c69-112-156-88-200.jp.ngrok.io/mask?id="+sessionStorage.getItem('id'), {responseType: 'blob'}).then(
-        (response)=> {
-            console.log(response);
-            console.log(response.data);
-            const fileReader = new FileReader();
-            fileReader.readAsDataURL(response.data)
-            fileReader.onload = () => {
-            const previewImage = fileReader.result;
-            console.log(previewImage);
-            setFile({
-                preview_image: previewImage,
-        })
-    }})
-    },[]);
+    // useEffect(() => {
+    //     axios.get("http://192.168.123.108:9091/mask?id="+sessionStorage.getItem('id'), {responseType: 'blob'}).then(
+    //     (response)=> {
+    //         console.log(response);
+    //         console.log(response.data);
+    //         const fileReader = new FileReader();
+    //         fileReader.readAsDataURL(response.data)
+    //         fileReader.onload = () => {
+    //         const previewImage = fileReader.result;
+    //         console.log(previewImage);
+    //         setFile({
+    //             preview_image: previewImage,
+    //     })
+    // }})
+    // },[]);
 
     // let data = JSON.stringify({
     //     hihi: 3,
@@ -59,7 +56,7 @@ function Main4(){
                     다시선택
                 </div>
             </Link>
-            <Link to = "/main5">
+            <Link to = "/main4to5">
                 <div className = "selected" onClick={Ok}>
                     맞음
                 </div>
