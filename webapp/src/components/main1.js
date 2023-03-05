@@ -57,7 +57,7 @@ class Main1 extends Component{
         }
 
         //http://192.168.0.19:9091/upload
-        return axios.post("https://3c69-112-156-88-200.jp.ngrok.io/upload", formData, config).then( //(업로드할 경로, 보낼 것)
+        return axios.post("http://192.168.123.108:9091/upload", formData, config).then( //(업로드할 경로, 보낼 것)
         //127.0.0.1 local 컴퓨터 주소 5000 플라스크 기본 포트
             (response) => {
                 // if(response.data === "SUCCESS"){

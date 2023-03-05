@@ -34,7 +34,7 @@ function Main2(){
             </div>
             <video className = "videoDisplay" id = "myVideo" controls={true} autoPlay={true} type = "video/mp4" src={file.preview_URL}/>
             {/* <button onClick = {getCurTime}type="button">Get current time position</button> */}
-            <Link to ="/main3">
+            <Link to ="/main2to3">
                 <div onClick = {getCurTime} className = "selected">선택</div>
             </Link>
         </div>
