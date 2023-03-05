@@ -10,7 +10,7 @@ import Main3to4 from './components/main3to4.js';
 import Main4 from './components/main4.js';
 import Main4to5 from './components/main4to5.js';
 import Main5 from './components/main5.js';
-import {Route, Routes, Link } from "react-router-dom";
+import {Route, Routes, } from "react-router-dom";
 
 const App = () => {
   return (
